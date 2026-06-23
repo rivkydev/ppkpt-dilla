@@ -2,6 +2,8 @@
 **Sistem Informasi Pengaduan Kekerasan (PPKPT ITH)**
 _Terintegrasi dengan Kriptografi Hibrida (AES-256 & RSA-2048) dan Metode SPK MARCOS_
 
+**Developer / Peneliti:** AMALIAH NURUL FADILLAH (221011051)
+
 ---
 
 ## DAFTAR ISI

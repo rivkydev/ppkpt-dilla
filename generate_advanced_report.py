@@ -28,6 +28,10 @@ def create_report():
     pdf.set_text_color(0, 0, 0)
     pdf.cell(0, 8, '1. Informasi Eksekusi', ln=True)
     pdf.set_font('Arial', '', 10)
+    
+    pdf.cell(50, 6, 'Developer / Peneliti')
+    pdf.cell(0, 6, ': AMALIAH NURUL FADILLAH (221011051)', ln=True)
+    
     pdf.cell(50, 6, 'Tanggal Pengujian')
     pdf.cell(0, 6, f': {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}', ln=True)
     pdf.cell(50, 6, 'Framework Penguji')
