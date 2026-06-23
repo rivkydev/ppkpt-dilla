@@ -45,38 +45,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $user = User::create([
-            'username' => '221031066',
-            'password' => '221031066',
+            'username' => '221011051',
+            'password' => '221011051',
             'role' => 'pelapor',
-            'fullname' => 'Andi Riah Zahirah',
+            'fullname' => 'AMALIAH NURUL FADILLAH',
             'profile' => 'profiluser/user.webp',
             'status_verify' => '1', 
-            'email' => 'andiriahzahirah.221031066@mahasiswa.ith.ac.id',
-            'nim_nidn' => '221031066',
-            'status' => 'Mahasiswa',
-        ]);
-
-        $user = User::create([
-            'username' => '221031003',
-            'password' => '221031003',
-            'role' => 'pelapor',
-            'fullname' => 'Muhammad Akbar',
-            'profile' => 'img/user.webp',
-            'status_verify' => '1', 
-            'email' => 'muhammadakbar.221031003@mahasiswa.ith.ac.id',
-            'nim_nidn' => '221031003',
-            'status' => 'Mahasiswa',
-        ]);
-
-        $user = User::create([
-            'username' => '221031018',
-            'password' => '221031018',
-            'role' => 'pelapor',    
-            'fullname' => 'Lukman Hakim',
-            'profile' => 'img/user.webp',
-            'status_verify' => '1', 
-            'email' => 'lukmanhakim.221031018@mahasiswa.ith.ac.id',
-            'nim_nidn' => '221031018',
+            'email' => 'AMALIAHNURULFADILLAH.221011051@mahasiswa.ith.ac.id',
+            'nim_nidn' => '221011051',
             'status' => 'Mahasiswa',
         ]);
 
