@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@source "../views";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+@theme {
+  --font-roboto: "Roboto", sans-serif; 
+  --font-rubik: "Rubik", sans-serif;
+}
+
+.bg-login {
+    background-image: url('/img/Rectangle1.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+
