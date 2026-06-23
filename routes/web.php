@@ -24,9 +24,6 @@ Route::get('/', [BeritaController::class, 'search'])->name('home');
 
 Route::post('/store', [UserController::class, 'store'])->name('messages.store');
 
-Route::get('/verify', [UserController::class, 'verify'])->name('verify');
-Route::post('/verify', [UserController::class, 'verifyOtp'])->name('verify.otp');
-Route::post('/verify/resend', [UserController::class, 'resendOtp'])->name('verify.resend');
 
 Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/admin', [AdminController::class, 'berita'])->name('admin.home');
@@ -62,7 +59,7 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/admin/detailaduan/{id}', [AdminController::class, 'detailaduan'])->name('admin.detailaduan');
 });
 
-Route::middleware('auth', 'role:pelapor', 'checkStatus')->group(function () { 
+Route::middleware('auth', 'role:pelapor')->group(function () { 
     Route::get('/user', [UserController::class, 'berita'])->name('user.home');
     Route::post('/user', [UserController::class, 'storeAduan'])->name('aduan.store');
     Route::get('/user/hasilinvestigasi/{kode_aduan}', [UserController::class, 'hasilinvestigasi'])->name('user.hasilinvestigasi');

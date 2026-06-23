@@ -30,21 +30,6 @@ class LoginController extends Controller
         if ($user->role === 'admin') {
             return redirect('/admin');
         } elseif ($user->role === 'pelapor') {
-            if ($user->status_verify == 0) {
-                $otp = rand(1000, 9999);
-                $verify = Verify::create([
-                    'user_id' => $user->id,
-                    'otp' => md5($otp),
-                    'expired_at' => now()->addMinutes(2),
-                ]);
-
-                Mail::to($user->email)->send(new OtpMail($otp));
-                
-                // Simpan expired timestamp ke session (milidetik)
-                session(['otpTargetTime' => now()->addMinutes(2)->timestamp * 1000]);
-
-                return redirect('/verify')->with('otpTargetTime', now()->addMinutes(2)->timestamp * 1000);
-            } 
             return redirect('/user');
         } elseif ($user->role === 'satgas') {
             return redirect('/satgas');
