@@ -54,8 +54,8 @@ Implementasi ini ditanam dalam _helpers_ dan _models_:
    Memanfaatkan library `openssl_encrypt`. Setiap pelaporan memicu eksekusi `AesHelper::generateKey()` untuk menciptakan _passphrase_ (Kunci AES) acak sepanjang 32 karakter (256-bit).
 2. **`app/Helpers/RsaHelper.php`**
    Kunci AES yang di-_generate_ dienkripsi menggunakan `openssl_public_encrypt()` bersamaan dengan *Public Key* RSA yang berada di server.
-3. **`app/Models/Aduan.php` (`decryptData`)**
-   Sistem memanggil `decryptData()` otomatis setiap kali _dashboard_ perlu menampilkan data asli kepada Satgas/Admin yang sah, melakukan proses dekripsi mundur dari *RSA Private Key* -> *Kunci AES* -> *Data Asli (Plaintext)*.
+3. **`app/Models/Aduan.php` (`decryptData`) & `decryptAduan` (Controller)**
+   Sistem memanggil fungsi dekripsi secara spesifik. Untuk menjaga privasi tingkat tinggi, **Satgas tidak diberikan dekripsi otomatis**. Satgas harus memasukkan *private key* secara manual (melalui sistem modal di *dashboard*) untuk membongkar data dari *Ciphertext* -> *Data Asli (Plaintext)*. Sementara itu, Admin dapat mendekripsi teks untuk verifikasi awal, namun **tidak diberikan akses untuk membuka atau mengunduh file bukti/pernyataan** dari pelapor.
 
 **Atribut yang Dienkripsi di Database:**
 `nama_pelapor`, `alamat_pelapor`, `email_pelapor`, `phone_pelapor`, `nama_korban`, `nama_terlapor`, dan `chronology`.
@@ -111,8 +111,8 @@ sequenceDiagram
 
 ### Penjelasan Titik Proses:
 - **Pelapor (`UserController`)**: Setelah melakukan aktivasi email OTP (guna mencegah *spam* atau *bot*), Pelapor mengisi data di form `/user/tambahaduan`. Kriptografi hibrida tereksekusi pada saat instruksi penyisipan data ke DB berlangsung.
-- **Admin (`AdminController`)**: Bertindak sebagai *Gatekeeper*. Admin memastikan data tidak asal-asalan. Jika ditolak, status bergeser ke "Ditolak Admin". Jika relevan, diteruskan ke "Diteruskan ke Satgas". *Middleware* memastikan Satgas tak bisa melihat laporan sebelum dilegalisasi oleh Admin.
-- **Satgas (`SatgasController`)**: Satgas memiliki akses prioritas. Begitu sebuah kasus divalidasi, Satgas membuka `Daftar Laporan Masuk` dan sistem otomatis membongkar (*decrypt*) informasi identitas tersebut saat data disajikan (*View*).
+- **Admin (`AdminController`)**: Bertindak sebagai *Gatekeeper*. Admin memastikan data tidak asal-asalan. Jika ditolak, status bergeser ke "Ditolak Admin". Jika relevan, diteruskan ke "Diteruskan ke Satgas". *Middleware* memastikan Satgas tak bisa melihat laporan sebelum dilegalisasi oleh Admin. Sebagai lapisan privasi tambahan, Admin hanya bisa melihat teks aduan dan **tidak memiliki hak akses untuk membuka atau melihat dokumen bukti/pernyataan** milik pelapor.
+- **Satgas (`SatgasController`)**: Satgas memiliki akses prioritas dan investigasi penuh. Begitu sebuah kasus divalidasi, Satgas membuka `Daftar Laporan Masuk`. Untuk menjaga kerahasiaan jika akun Satgas diakses pihak tak bertanggung jawab, data disajikan dalam keadaan **terenkripsi secara default**. Satgas harus menekan tombol *Dekripsi Aduan* dan memasukkan *Private Key* untuk membongkar informasi identitas secara aktual (*On-Demand Decryption*).
 
 ---
 

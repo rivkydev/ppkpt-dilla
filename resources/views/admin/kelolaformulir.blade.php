@@ -178,13 +178,7 @@ overflow-hidden">
                                                     <td class="font-bold w-[140px] align-top">File Pernyataan</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        @if ($aduan->pernyataan_pelapor)
-                                                            <a href="{{ asset('storage/' . $aduan->pernyataan_pelapor) }}"
-                                                                target="_blank"
-                                                                class="text-[#0970A5] hover:underline">Lihat File</a>
-                                                        @else
-                                                            -
-                                                        @endif
+                                                        <span class="text-gray-500 italic">Akses Dibatasi</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -380,13 +374,7 @@ overflow-hidden">
                                                     <td class="font-bold w-[140px] align-top">File Bukti</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        @if ($aduan->bukti_pelaporan)
-                                                            <a href="{{ asset('storage/' . $aduan->bukti_pelaporan) }}"
-                                                                target="_blank"
-                                                                class="text-[#0970A5] hover:underline">Lihat File</a>
-                                                        @else
-                                                            -
-                                                        @endif
+                                                        <span class="text-gray-500 italic">Akses Dibatasi</span>
                                                     </td>
                                                 </tr>
                                                 <tr>

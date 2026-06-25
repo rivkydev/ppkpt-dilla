@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detail Investigasi - PPKPT ITH</title>
@@ -8,7 +9,7 @@
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"> -->
     <!-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
 </head>
-<body>
+<body x-data="satgasDecryptPage({{ $aduan->id }})">
     <x-nav-baar></x-nav-baar>
     
     <div class="flex mt-31">
@@ -28,6 +29,29 @@
                     </a>
                 </div>
             
+                
+                    <div class="mb-6">
+                        <button
+                            @click="showModal = true"
+                            class="bg-blue-500 text-white px-4 py-2 rounded mb-2">
+                            Dekripsi Aduan
+                        </button>
+                        <p class="text-sm text-gray-600" x-show="executionTime">
+                            ⏱️ Waktu proses dekripsi: <span x-text="executionTime.toFixed(4)"></span> detik
+                        </p>
+
+                        <div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+                            <div class="bg-white p-6 rounded w-96">
+                                <h2 class="text-lg font-bold mb-4">Masukkan Key Dekripsi</h2>
+                                <input type="password" x-model="key" class="w-full border px-3 py-2 rounded mb-4" placeholder="Masukkan private key" @keyup.enter="decryptAduan()">
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" @click="closeModal" class="px-4 py-2 bg-gray-500 text-white rounded">Batal</button>
+                                    <button @click="decryptAduan()" class="px-4 py-2 bg-green-500 text-white rounded">Dekripsi</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-base font-semibold text-[#0970A5]
@@ -50,7 +74,7 @@
     @endphp
 
     <span class="px-3 py-1 text-sm font-semibold rounded-full bg-gray-100 text-gray-700">
-        {{ $aduan->bersedia ?? '-' }}
+        <span x-show="!isDecrypted">{{ $aduan->bersedia ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.bersedia : '-'"></span>
     </span>
 
     <span 
@@ -78,7 +102,7 @@
                             </div>
                             <div>
                                 <p class="text-gray-500">Lokasi Kejadian</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->lokasi ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->lokasi ?? '-'}}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.lokasi : '-'"></span></p>
                             </div>
                         </div>
                     </div>
@@ -90,23 +114,23 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
                             <div>
                                 <p class="text-gray-500">Nama Pelapor</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->nama_pelapor ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->nama_pelapor ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.nama_pelapor : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">Alamat</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->alamat_pelapor ?? '-'}}</</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->alamat_pelapor ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.alamat_pelapor : '-'"></span></</p>
                             </div>
                             <div>
                                 <p class="text-gray-500">Email</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->email_pelapor ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->email_pelapor ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.email_pelapor : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">No HP</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->phone_pelapor ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->phone_pelapor ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.phone_pelapor : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">Bersedia Dihubungi</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->hubungi ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->hubungi ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.hubungi : '-'"></span></p>
                             </div>
                         </div>
                     </div>
@@ -119,23 +143,23 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
                             <div>
                                 <p class="text-gray-500">Nama Korban</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->nama_korban ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->nama_korban ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.nama_korban : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">Jenis Kelamin</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->jenis_kelamin_korban ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->jenis_kelamin_korban ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.jenis_kelamin_korban : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">Alamat</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->alamat_korban ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->alamat_korban ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.alamat_korban : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">No HP</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->phone_korban ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->phone_korban ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.phone_korban : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">Status Korban</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->status_korban ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->status_korban ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.status_korban : '-'"></span></p>
                             </div>
                         </div>
                     </div>
@@ -148,27 +172,27 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
                             <div>
                                 <p class="text-gray-500">Nama Terlapor</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->nama_terlapor ?? '-' }}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->nama_terlapor ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.nama_terlapor : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">Jenis Kelamin</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->jenis_kelamin_terlapor ?? '-' }}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->jenis_kelamin_terlapor ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.jenis_kelamin_terlapor : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">Alamat</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->alamat_terlapor ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->alamat_terlapor ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.alamat_terlapor : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">No HP</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->phone_terlapor ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->phone_terlapor ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.phone_terlapor : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">Status</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->status_terlapor ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->status_terlapor ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.status_terlapor : '-'"></span></p>
                             </div>
                             <div>
                                 <p class="text-gray-500">Karakteristik</p>
-                                <p class="font-semibold text-gray-800">{{ $aduan->karakteristik_terlapor ?? '-'}}</p>
+                                <p class="font-semibold text-gray-800"><span x-show="!isDecrypted">{{ $aduan->karakteristik_terlapor ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.karakteristik_terlapor : '-'"></span></p>
                             </div>
                         </div>
                     </div>
@@ -182,7 +206,7 @@
                             <div>
                                 <p class="font-medium text-gray-700 mb-1">Kronologi</p>
                                 <div class="bg-gray-50 border rounded-lg p-3 text-gray-700">
-                                    {{ $aduan->chronology ?? '-'}}
+                                    <span x-show="!isDecrypted">{{ $aduan->chronology ?? '-' }}</span><span x-show="isDecrypted" x-text="decrypted ? decrypted.chronology : '-'"></span>
                                 </div>
                             </div>
 

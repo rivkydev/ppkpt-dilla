@@ -80,6 +80,7 @@ Route::middleware('auth', 'role:satgas')->group(function () {
     Route::get('/satgas/berita', [SatgasController::class, 'berita'])->name('satgas.berita');
     Route::get('/satgas/berita/{id}', [SatgasController::class, 'beritaDetail'])->name('satgas.beritaDetail');
 
+    Route::post('/satgas/aduan/decrypt/{id}', [SatgasController::class, 'decryptAduan']);
     Route::get('/satgas/perhitungan', [AhpController::class, 'calculate'])->name('satgas.perhitungan');
 });
 

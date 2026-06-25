@@ -80,11 +80,6 @@ class SatgasController extends Controller
     {
         $aduan = Aduan::where('kode_aduan', $id)->firstOrFail();
         
-        // Dekripsi menggunakan model method
-        $aduan->decryptData();
-
-        
-
         return view('satgas.detaillaporan', compact('aduan'));
     }
 
@@ -215,9 +210,6 @@ $ranking = $marcos->fungsiKegunaan($Cplus, $Cminus);
         $aduan = Aduan::findOrFail($id);
         $investigasi = Investigation::where('kode_aduan', $aduan->kode_aduan)->first();
 
-        // Dekripsi menggunakan model method
-        $aduan->decryptData();
-        
         return view('satgas.investigasi', compact('aduan', 'investigasi'));
     }
 
@@ -370,12 +362,79 @@ $ranking = $marcos->fungsiKegunaan($Cplus, $Cminus);
         ->orderBy('nilai', 'desc')
         ->get();
 
-        foreach ($aduans as $aduan) {
-            $aduan->decryptData();
-        }
-
         return view('satgas.laporanmasuk', compact('aduans'));
     }
 
-  
+    public function decryptAduan(Request $request, $id)
+    {
+        $start = microtime(true);
+        $aduan = Aduan::findOrFail($id);
+
+        try {
+            $inputKey = $request->input('key');
+            $key = null;
+
+            if ($aduan->encrypted_aes_key) {
+                // Jika satgas memasukkan kode pendek (OTP/PIN)
+                if ($inputKey === 'PPKPTith' || $inputKey === 'satgas123') {
+                    $key = \App\Helpers\RsaHelper::decryptKey($aduan->encrypted_aes_key);
+                }
+                // Jika satgas (opsional) memasukkan teks RSA utuh
+                elseif (strpos($inputKey, 'BEGIN PRIVATE KEY') !== false || strpos($inputKey, 'BEGIN RSA PRIVATE KEY') !== false) {
+                    $encryptedAesKey = base64_decode($aduan->encrypted_aes_key);
+                    if (openssl_private_decrypt($encryptedAesKey, $decrypted, $inputKey)) {
+                        $key = $decrypted;
+                    } else {
+                        throw new \Exception("Private key tidak valid.");
+                    }
+                } else {
+                    throw new \Exception("Kode dekripsi salah.");
+                }
+            } else {
+                $key = $inputKey;
+            }
+
+            $testDecrypt = AesHelper::decrypt($aduan->nama_pelapor, $key);
+            if ($aduan->nama_pelapor && $testDecrypt === false) {
+                throw new \Exception("Key salah atau data rusak.");
+            }
+
+            $decrypted = [
+                'nama_pelapor' => AesHelper::decrypt($aduan->nama_pelapor, $key),
+                'alamat_pelapor' => AesHelper::decrypt($aduan->alamat_pelapor, $key),
+                'email_pelapor' => AesHelper::decrypt($aduan->email_pelapor, $key),
+                'phone_pelapor' => AesHelper::decrypt($aduan->phone_pelapor, $key),
+                'hubungi' => AesHelper::decrypt($aduan->hubungi, $key),
+                'nama_korban' => AesHelper::decrypt($aduan->nama_korban, $key),
+                'alamat_korban' => AesHelper::decrypt($aduan->alamat_korban, $key),
+                'phone_korban' => AesHelper::decrypt($aduan->phone_korban, $key),
+                'nama_terlapor' => AesHelper::decrypt($aduan->nama_terlapor, $key),
+                'alamat_terlapor' => AesHelper::decrypt($aduan->alamat_terlapor, $key),
+                'phone_terlapor' => AesHelper::decrypt($aduan->phone_terlapor, $key),
+                'chronology' => AesHelper::decrypt($aduan->chronology, $key),
+                'karakteristik_terlapor' => AesHelper::decrypt($aduan->karakteristik_terlapor, $key),
+                'terlapor' => AesHelper::decrypt($aduan->terlapor, $key),
+                'warning' => AesHelper::decrypt($aduan->warning, $key),
+                'warning_detail' => AesHelper::decrypt($aduan->warning_detail, $key),
+                'lokasi' => AesHelper::decrypt($aduan->lokasi, $key),
+                'jenis_kelamin_korban' => AesHelper::decrypt($aduan->jenis_kelamin_korban, $key),
+                'status_korban' => AesHelper::decrypt($aduan->status_korban, $key),
+                'jenis_kelamin_terlapor' => AesHelper::decrypt($aduan->jenis_kelamin_terlapor, $key),
+                'status_terlapor' => AesHelper::decrypt($aduan->status_terlapor, $key),
+                'bersedia' => AesHelper::decrypt($aduan->bersedia, $key),
+            ];
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $decrypted,
+                'execution_time' => microtime(true) - $start
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Key salah atau gagal dekripsi',
+                'execution_time' => microtime(true) - $start
+            ]);
+        }
+    }
 }

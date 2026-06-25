@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PPKPT ITH</title>
@@ -10,7 +11,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"> -->
     <!-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
 </head>
-<body>
+<body x-data="satgasDecryptPage({{ $aduan->id }})">
     <x-nav-baar></x-nav-baar>
     <div class="flex mt-31">
         <div class="h-[520px] w-[300px] bg-[#0970A5] px-4 py-15 shadow-lg rounded-lg lg:block hidden">
@@ -73,7 +74,7 @@
                           </div>
                           <div class="flex flex-col">
                                 <label class="text-gray-600 mb-1 font-medium">Lokasi Kejadian</label>
-                                <input type="text" name="lokasi_kejadian" value="{{ $aduan->lokasi }}"
+                                <input type="text" name="lokasi_kejadian" :value="isDecrypted ? (decrypted ? decrypted.lokasi : '') : '{{ $aduan->lokasi }}'"
                                     readonly
                                     class="border border-gray-300 bg-gray-100 text-gray-700
                                             rounded-lg px-3 py-2 cursor-not-allowed
@@ -102,7 +103,7 @@
                                 <!-- Nama Korban -->
                                 <div class="flex flex-col">
                                     <label for="nama_korban" class="text-gray-600 font-medium mb-1">Nama Korban</label>
-                                    <input type="text" id="nama_korban" name="nama_korban" value="{{ $aduan->nama_korban }}"
+                                    <input type="text" id="nama_korban" name="nama_korban" :value="isDecrypted ? (decrypted ? decrypted.nama_korban : '') : '{{ $aduan->nama_korban }}'"
                                         readonly
                                     class="border border-gray-300 bg-gray-100 text-gray-700
                                             rounded-lg px-3 py-2 cursor-not-allowed
@@ -112,7 +113,7 @@
                                 <!-- Status -->
                                 <div class="flex flex-col">
                                     <label for="status_korban" class="text-gray-600 font-medium mb-1">Status</label>
-                                    <input type="text" id="status_korban" name="status_korban" value="{{ $aduan->status_korban }}"
+                                    <input type="text" id="status_korban" name="status_korban" :value="isDecrypted ? (decrypted ? decrypted.status_korban : '') : '{{ $aduan->status_korban }}'"
                                         readonly
                                     class="border border-gray-300 bg-gray-100 text-gray-700
                                             rounded-lg px-3 py-2 cursor-not-allowed
@@ -131,7 +132,7 @@
 
                                 <div class="flex flex-col">
                                     <label for="nama_korban" class="text-gray-600 font-medium mb-1">Nama Terlapor</label>
-                                    <input type="text" id="nama_terlapor" name="nama_terlapor" value="{{ $aduan->nama_terlapor }}"
+                                    <input type="text" id="nama_terlapor" name="nama_terlapor" :value="isDecrypted ? (decrypted ? decrypted.nama_terlapor : '') : '{{ $aduan->nama_terlapor }}'"
                                         readonly
                                     class="border border-gray-300 bg-gray-100 text-gray-700
                                             rounded-lg px-3 py-2 cursor-not-allowed
@@ -141,7 +142,7 @@
                                 <!-- Status -->
                                 <div class="flex flex-col">
                                     <label for="status_terlapor" class="text-gray-600 font-medium mb-1">Status</label>
-                                    <input type="text" id="status_terlapor" name="status_terlapor" value="{{ $aduan->status_terlapor }}"
+                                    <input type="text" id="status_terlapor" name="status_terlapor" :value="isDecrypted ? (decrypted ? decrypted.status_terlapor : '') : '{{ $aduan->status_terlapor }}'"
                                         readonly
                                     class="border border-gray-300 bg-gray-100 text-gray-700
                                             rounded-lg px-3 py-2 cursor-not-allowed

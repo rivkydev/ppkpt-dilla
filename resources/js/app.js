@@ -195,5 +195,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-Alpine.start()
+Alpine.data('satgasDecryptPage', (initialId) => ({
+    showModal: false,
+    key: '',
+    decrypted: null,
+    isDecrypted: false,
+    executionTime: 0,
+    aduanId: initialId,
 
+    closeModal() {
+        this.showModal = false
+        this.key = ''
+    },
+
+    decryptAduan() {
+        fetch(`/satgas/aduan/decrypt/${this.aduanId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').content : ''
+            },
+            body: JSON.stringify({ key: this.key })
+        })
+        .then(r => r.json())
+        .then(r => {
+            if (r.status === 'success') {
+                this.decrypted = r.data
+                this.executionTime = r.execution_time
+                this.isDecrypted = true
+                this.key = ''
+                this.showModal = false
+            } else {
+                alert(r.message)
+            }
+        })
+        .catch(() => alert('Gagal dekripsi'))
+    }
+}))
+
+Alpine.start()

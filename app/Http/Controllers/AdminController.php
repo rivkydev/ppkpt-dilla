@@ -598,6 +598,10 @@ public function decryptAduan(Request $request, $id)
             ];
         } else {
             $key = $request->input('key');
+            $testDecrypt = AesHelper::decrypt($aduan->nama_pelapor, $key);
+            if ($aduan->nama_pelapor && $testDecrypt === false) {
+                throw new \Exception("Key salah atau data rusak.");
+            }
             $decrypted = [
                 'nama_pelapor' => AesHelper::decrypt($aduan->nama_pelapor, $key),
                 'alamat_pelapor' => AesHelper::decrypt($aduan->alamat_pelapor, $key),
