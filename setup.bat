@@ -51,8 +51,9 @@ echo File .env sudah ada, skip copy.
 :env_done
 
 echo.
-echo [4/7] Menghasilkan Application Key (APP_KEY) dan Storage Link...
+echo [4/7] Menghasilkan Application Key, RSA Keys, dan Storage Link...
 php artisan key:generate
+php artisan rsa:generate
 php artisan storage:link
 
 echo.
