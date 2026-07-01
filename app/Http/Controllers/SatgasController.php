@@ -437,4 +437,66 @@ $ranking = $marcos->fungsiKegunaan($Cplus, $Cminus);
             ]);
         }
     }
+    public function downloadFile(Request $request, $id, $type)
+    {
+        $aduan = Aduan::findOrFail($id);
+        
+        try {
+            $inputKey = $request->input('key');
+            $key = null;
+
+            if ($aduan->encrypted_aes_key) {
+                if ($inputKey === 'PPKPTith' || $inputKey === 'satgas123') {
+                    $key = \App\Helpers\RsaHelper::decryptKey($aduan->encrypted_aes_key);
+                } elseif (strpos($inputKey, 'BEGIN PRIVATE KEY') !== false || strpos($inputKey, 'BEGIN RSA PRIVATE KEY') !== false) {
+                    $encryptedAesKey = base64_decode($aduan->encrypted_aes_key);
+                    if (openssl_private_decrypt($encryptedAesKey, $decrypted, $inputKey)) {
+                        $key = $decrypted;
+                    } else {
+                        throw new \Exception("Private key tidak valid.");
+                    }
+                } else {
+                    throw new \Exception("Kode dekripsi salah.");
+                }
+            } else {
+                $key = $inputKey;
+            }
+
+            // Test decrypt to verify key is correct
+            $testDecrypt = AesHelper::decrypt($aduan->nama_pelapor, $key);
+            if ($aduan->nama_pelapor && $testDecrypt === false) {
+                throw new \Exception("Key salah atau data rusak.");
+            }
+
+            $filePath = '';
+            if ($type === 'pernyataan' && $aduan->pernyataan_pelapor) {
+                $filePath = $aduan->pernyataan_pelapor;
+            } elseif ($type === 'bukti' && $aduan->bukti_pelaporan) {
+                $filePath = $aduan->bukti_pelaporan;
+            } else {
+                return redirect()->back()->with('error', 'File tidak ditemukan.');
+            }
+
+            $fullPath = storage_path('app/public/' . $filePath);
+            if (!file_exists($fullPath)) {
+                return redirect()->back()->with('error', 'File fisik tidak ditemukan.');
+            }
+
+            $encryptedContent = file_get_contents($fullPath);
+            $decryptedContent = AesHelper::decryptWithKey($encryptedContent, $key);
+
+            if ($decryptedContent === false) {
+                return redirect()->back()->with('error', 'Gagal mendekripsi file.');
+            }
+
+            $fileName = basename($filePath);
+            
+            return response()->streamDownload(function () use ($decryptedContent) {
+                echo $decryptedContent;
+            }, $fileName);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Key salah atau gagal dekripsi file.');
+        }
+    }
 }

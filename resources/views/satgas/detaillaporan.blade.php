@@ -218,22 +218,32 @@
                             Dokumen Pendukung
                         </h2>
 
-                        <div class="flex gap-4">
+                        <div class="flex flex-col gap-4">
                             @if ($aduan->pernyataan_pelapor)
-                                <a href="{{ asset('storage/' . $aduan->pernyataan_pelapor) }}" 
-                                   target="_blank"
-                                   class="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border rounded-lg hover:bg-gray-100 text-sm">
-                                    <i class="fa-solid fa-file-pdf text-red-500"></i>
-                                    File Pernyataan
-                                </a>
+                                <div>
+                                    <span x-show="!isDecrypted" class="text-sm text-gray-500 italic">Dekripsi aduan untuk mengunduh file pernyataan</span>
+                                    <form :action="'{{ route('satgas.downloadFile', ['id' => $aduan->id, 'type' => 'pernyataan']) }}'" method="POST" target="_blank" x-show="isDecrypted" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="key" :value="key">
+                                        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border rounded-lg hover:bg-gray-100 text-sm cursor-pointer">
+                                            <i class="fa-solid fa-file-pdf text-red-500"></i>
+                                            Download File Pernyataan
+                                        </button>
+                                    </form>
+                                </div>
                             @endif
                             @if ($aduan->bukti_pelaporan)
-                                <a href="{{ asset('storage/' . $aduan->bukti_pelaporan) }}" 
-                                   target="_blank"
-                                   class="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border rounded-lg hover:bg-gray-100 text-sm">
-                                    <i class="fa-solid fa-file-pdf text-red-500"></i>
-                                    File Bukti
-                                </a>
+                                <div>
+                                    <span x-show="!isDecrypted" class="text-sm text-gray-500 italic">Dekripsi aduan untuk mengunduh file bukti</span>
+                                    <form :action="'{{ route('satgas.downloadFile', ['id' => $aduan->id, 'type' => 'bukti']) }}'" method="POST" target="_blank" x-show="isDecrypted" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="key" :value="key">
+                                        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border rounded-lg hover:bg-gray-100 text-sm cursor-pointer">
+                                            <i class="fa-solid fa-file-pdf text-red-500"></i>
+                                            Download File Bukti
+                                        </button>
+                                    </form>
+                                </div>
                             @endif
                             @if (!$aduan->pernyataan_pelapor && !$aduan->bukti_pelaporan)
                                 <p class="text-sm text-gray-500">Tidak ada dokumen pendukung.</p>

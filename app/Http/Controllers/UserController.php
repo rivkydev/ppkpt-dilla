@@ -65,20 +65,6 @@ class UserController extends Controller
 
         unset($validatedData['hubungi_akun']);
 
-        try {
-            if ($request->hasFile('pernyataan_pelapor')) {
-                $validatedData['pernyataan_pelapor'] =
-                    $request->file('pernyataan_pelapor')->store('aduan/pernyataan', 'public');
-            }
-
-            if ($request->hasFile('bukti_pelaporan')) {
-                $validatedData['bukti_pelaporan'] =
-                    $request->file('bukti_pelaporan')->store('aduan/bukti', 'public');
-            }
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal upload file: ' . $e->getMessage());
-        }
-
         $validatedData['user_id'] = Auth::id();
         $validatedData['icon'] = 'fa-solid fa-file-circle-check';
 
@@ -117,6 +103,29 @@ class UserController extends Controller
             }
         }
 
+        try {
+            if ($request->hasFile('pernyataan_pelapor')) {
+                $file = $request->file('pernyataan_pelapor');
+                $filePath = $file->store('aduan/pernyataan', 'public');
+                $fullPath = storage_path('app/public/' . $filePath);
+                $fileContent = file_get_contents($fullPath);
+                $encryptedContent = AesHelper::encryptWithKey($fileContent, $aesKey);
+                file_put_contents($fullPath, $encryptedContent);
+                $validatedData['pernyataan_pelapor'] = $filePath;
+            }
+
+            if ($request->hasFile('bukti_pelaporan')) {
+                $file = $request->file('bukti_pelaporan');
+                $filePath = $file->store('aduan/bukti', 'public');
+                $fullPath = storage_path('app/public/' . $filePath);
+                $fileContent = file_get_contents($fullPath);
+                $encryptedContent = AesHelper::encryptWithKey($fileContent, $aesKey);
+                file_put_contents($fullPath, $encryptedContent);
+                $validatedData['bukti_pelaporan'] = $filePath;
+            }
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal upload file: ' . $e->getMessage());
+        }
         $aduan = Aduan::create($validatedData);
         $service = new MARCOSService();
 

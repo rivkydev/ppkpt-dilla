@@ -106,48 +106,6 @@ overflow-hidden">
                                <template x-if="selectedAduan">
                         <div>
 
-                            <!-- tombol buka modal -->
-                            <button
-                                @click="showModal = true"
-                                class="bg-blue-500 text-white px-4 py-2 rounded mb-4">
-                                Dekripsi Aduan
-                            </button>
-
-                            <p class="text-sm text-gray-600 mb-2"
-                                x-show="executionTime">
-                                ⏱️ Waktu proses dekripsi: 
-                                <span x-text="executionTime.toFixed(4)"></span> detik
-                                </p>
-
-                            <!-- MODAL — hanya SATU -->
-                            <div x-show="showModal"
-                                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-
-                                <div class="bg-white p-6 rounded w-96">
-                                    <h2 class="text-lg font-bold mb-4">Masukkan Key Dekripsi</h2>
-
-                                    <input type="password"
-                                        x-model="key"
-                                        class="w-full border px-3 py-2 rounded mb-4"
-                                        placeholder="Masukkan key AES"
-                                        @keyup.enter="decryptAduan(selectedAduan)">
-
-                                    <div class="flex justify-end gap-2">
-                                       <button
-                                            type="button"
-                                            @click="closeModal"
-                                            class="px-4 py-2 bg-gray-500 text-white rounded">
-                                            Batal
-                                        </button>
-
-                                        <button @click="decryptAduan(selectedAduan)"
-                                            class="px-4 py-2 bg-green-500 text-white rounded">
-                                            Dekripsi
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- DETAIL ADUAN -->
                             @foreach($aduans as $aduan)
                                 <div x-show="selectedAduan === {{ $aduan->id }}">
@@ -158,20 +116,14 @@ overflow-hidden">
                                                     <td class="font-bold w-[140px] align-top">Nama Pelapor</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->nama_pelapor ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.nama_pelapor : '-'"></span>
+                                                        <span>{{ $aduan->nama_pelapor ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">Alamat</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->alamat_pelapor ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.alamat_pelapor : '-'"></span>
+                                                        <span>{{ $aduan->alamat_pelapor ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -185,30 +137,21 @@ overflow-hidden">
                                                     <td class="font-bold w-[140px] align-top">Email</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->email_pelapor ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.email_pelapor : '-'"></span>
+                                                        <span>{{ $aduan->email_pelapor ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">No. HP</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->phone_pelapor ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.phone_pelapor : '-'"></span>
+                                                        <span>{{ $aduan->phone_pelapor ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold">Hubungi</td>  
                                                     <td class="px-2">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->hubungi ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.hubungi : '-'"></span>
+                                                        <span>{{ $aduan->hubungi ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -221,49 +164,34 @@ overflow-hidden">
                                                     <td class="font-bold w-[140px] align-top">Nama Korban</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->nama_korban ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.nama_korban : '-'"></span>
+                                                        <span>{{ $aduan->nama_korban ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">Jenis Kelamin</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->jenis_kelamin_korban ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.jenis_kelamin_korban : '-'"></span>
+                                                        <span>{{ $aduan->jenis_kelamin_korban ?? '-' }}</span>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">Alamat</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->alamat_korban ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.alamat_korban : '-'"></span>
+                                                        <span>{{ $aduan->alamat_korban ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">No. HP</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span
-                                                            x-show="!isDecrypted">{{ $aduan->phone_korban ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.phone_korban : '-'"></span>
+                                                        <span>{{ $aduan->phone_korban ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">Status Di Kampus</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span x-show="!isDecrypted">{{ $aduan->status_korban ?? '-' }}
-                                                        </span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.status_korban : '-'"></span>
+                                                        <span>{{ $aduan->status_korban ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -276,70 +204,49 @@ overflow-hidden">
                                                     <td class="font-bold w-[140px] align-top">Nama Terlapor</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->nama_terlapor ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.nama_terlapor : '-'"></span>
+                                                        <span>{{ $aduan->nama_terlapor ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">Jenis Kelamin</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->jenis_kelamin_terlapor ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.jenis_kelamin_terlapor : '-'"></span>
+                                                        <span>{{ $aduan->jenis_kelamin_terlapor ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">Alamat</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->alamat_terlapor ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.alamat_terlapor : '-'"></span>
+                                                        <span>{{ $aduan->alamat_terlapor ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">No. HP</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->phone_terlapor ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.phone_terlapor : '-'"></span>
+                                                        <span>{{ $aduan->phone_terlapor ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">Status Di Kampus</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->status_terlapor ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.status_terlapor : '-'"></span>
+                                                        <span>{{ $aduan->status_terlapor ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">Karakteristik</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->karakteristik_terlapor ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.karakteristik_terlapor : '-'"></span>
+                                                        <span>{{ $aduan->karakteristik_terlapor ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="font-bold w-[140px] align-top">Peringatan</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span 
-                                                            x-show="!isDecrypted">{{ $aduan->warning_detail ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.warning_detail : '-'"></span>
+                                                        <span>{{ $aduan->warning_detail ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -364,10 +271,7 @@ overflow-hidden">
                                                     <td class="font-bold w-[140px] align-top">Kronologi Peristiwa</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span class="w-full break-words whitespace-normal"
-                                                            x-show="!isDecrypted">{{ $aduan->chronology ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.chronology : '-'"></span>
+                                                        <span>{{ $aduan->chronology ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -381,10 +285,7 @@ overflow-hidden">
                                                     <td class="font-bold w-[140px] align-top">Lokasi</td>
                                                     <td class="px-2 w-4">:</td>
                                                     <td class="w-full break-words whitespace-normal">
-                                                        <span class="w-full break-words whitespace-normal"
-                                                         x-show="!isDecrypted">{{ $aduan->lokasi ?? '-' }}</span>
-                                                        <span x-show="isDecrypted"
-                                                            x-text="decrypted ? decrypted.lokasi : '-'"></span>
+                                                        <span>{{ $aduan->lokasi ?? '-' }}</span>
                                                     </td>
                                                 </tr>
                                             </tbody>

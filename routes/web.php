@@ -29,7 +29,7 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/admin', [AdminController::class, 'berita'])->name('admin.home');
 
     Route::get('/admin/kelolaformulir', [AdminController::class, 'kelolaformulir'])->name('admin.kelolaformulir');
-    Route::post('/admin/aduan/decrypt/{id}', [AdminController::class, 'decryptAduan']);
+
     Route::post('/admin/kelolaformulir/kirim/{id}', [AdminController::class, 'kirimKeSatgas'])->name('admin.kirimKeSatgas');
     Route::post('/admin/kelolaformulir/tolak/{id}', [AdminController::class, 'tolakAduan'])->name('admin.tolakAduan');
     
@@ -81,6 +81,7 @@ Route::middleware('auth', 'role:satgas')->group(function () {
     Route::get('/satgas/berita/{id}', [SatgasController::class, 'beritaDetail'])->name('satgas.beritaDetail');
 
     Route::post('/satgas/aduan/decrypt/{id}', [SatgasController::class, 'decryptAduan']);
+    Route::post('/satgas/aduan/download/{id}/{type}', [SatgasController::class, 'downloadFile'])->name('satgas.downloadFile');
     Route::get('/satgas/perhitungan', [AhpController::class, 'calculate'])->name('satgas.perhitungan');
 });
 
