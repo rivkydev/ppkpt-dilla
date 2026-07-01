@@ -477,12 +477,11 @@ $ranking = $marcos->fungsiKegunaan($Cplus, $Cminus);
                 return redirect()->back()->with('error', 'File tidak ditemukan.');
             }
 
-            $fullPath = storage_path('app/public/' . $filePath);
-            if (!file_exists($fullPath)) {
+            if (!\Illuminate\Support\Facades\Storage::disk('public')->exists($filePath)) {
                 return redirect()->back()->with('error', 'File fisik tidak ditemukan.');
             }
 
-            $encryptedContent = file_get_contents($fullPath);
+            $encryptedContent = \Illuminate\Support\Facades\Storage::disk('public')->get($filePath);
             $decryptedContent = AesHelper::decryptWithKey($encryptedContent, $key);
 
             if ($decryptedContent === false) {

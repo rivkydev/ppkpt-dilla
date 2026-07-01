@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
             'profile' => 'img/user.webp',
-            'nim_nidn' => '1234567890',
+            'nim_nidn' => fake()->unique()->numerify('##########'),
             'status' => 'Mahasiswa',
         ];
     }

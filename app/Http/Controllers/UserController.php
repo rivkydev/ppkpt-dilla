@@ -103,29 +103,25 @@ class UserController extends Controller
             }
         }
 
-        try {
+        
             if ($request->hasFile('pernyataan_pelapor')) {
                 $file = $request->file('pernyataan_pelapor');
                 $filePath = $file->store('aduan/pernyataan', 'public');
-                $fullPath = storage_path('app/public/' . $filePath);
-                $fileContent = file_get_contents($fullPath);
+                $fileContent = \Illuminate\Support\Facades\Storage::disk('public')->get($filePath);
                 $encryptedContent = AesHelper::encryptWithKey($fileContent, $aesKey);
-                file_put_contents($fullPath, $encryptedContent);
+                \Illuminate\Support\Facades\Storage::disk('public')->put($filePath, $encryptedContent);
                 $validatedData['pernyataan_pelapor'] = $filePath;
             }
 
             if ($request->hasFile('bukti_pelaporan')) {
                 $file = $request->file('bukti_pelaporan');
                 $filePath = $file->store('aduan/bukti', 'public');
-                $fullPath = storage_path('app/public/' . $filePath);
-                $fileContent = file_get_contents($fullPath);
+                $fileContent = \Illuminate\Support\Facades\Storage::disk('public')->get($filePath);
                 $encryptedContent = AesHelper::encryptWithKey($fileContent, $aesKey);
-                file_put_contents($fullPath, $encryptedContent);
+                \Illuminate\Support\Facades\Storage::disk('public')->put($filePath, $encryptedContent);
                 $validatedData['bukti_pelaporan'] = $filePath;
             }
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal upload file: ' . $e->getMessage());
-        }
+        
         $aduan = Aduan::create($validatedData);
         $service = new MARCOSService();
 

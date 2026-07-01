@@ -53,7 +53,7 @@ def create_report():
     # Status bar
     pdf.set_fill_color(220, 255, 220)
     pdf.set_font('Arial', 'B', 10)
-    pdf.cell(0, 8, ' STATUS: 3 Test Suites | 5 Test Cases | 23 Assertions | 100% PASSED', border=1, ln=True, fill=True)
+    pdf.cell(0, 8, ' STATUS: 5 Test Suites | 44 Test Cases | 88 Assertions | 100% PASSED', border=1, ln=True, fill=True)
     pdf.ln(8)
 
     # 3. Rincian Skenario
@@ -64,10 +64,10 @@ def create_report():
     # Test 1
     pdf.set_font('Arial', 'B', 10)
     pdf.set_fill_color(240, 240, 240)
-    pdf.cell(0, 6, ' 3.1. Pengujian Kriptografi Hibrida (EncryptionTest.php)', border=1, ln=True, fill=True)
+    pdf.cell(0, 6, ' 3.1. Pengujian Kriptografi Hibrida (AesHelperTest & RsaHelperTest)', border=1, ln=True, fill=True)
     pdf.set_font('Arial', '', 10)
     pdf.cell(30, 6, ' Skenario 1:')
-    pdf.cell(0, 6, 'Menguji modul AES-256 (Enkripsi dan Dekripsi Teks Asli)', ln=True)
+    pdf.cell(0, 6, 'Menguji modul AES-256 (Enkripsi dan Dekripsi Teks Asli & File)', ln=True)
     pdf.set_text_color(0, 150, 0)
     pdf.cell(30, 6, ' Hasil:')
     pdf.cell(0, 6, 'PASSED (Lossless decryption berhasil)', ln=True)
@@ -83,7 +83,7 @@ def create_report():
 
     # Test 2
     pdf.set_font('Arial', 'B', 10)
-    pdf.cell(0, 6, ' 3.2. Pengujian Algoritma MARCOS (MarcosAlgorithmTest.php)', border=1, ln=True, fill=True)
+    pdf.cell(0, 6, ' 3.2. Pengujian Algoritma MARCOS (MarcosServiceTest)', border=1, ln=True, fill=True)
     pdf.set_font('Arial', '', 10)
     pdf.cell(30, 6, ' Skenario 1:')
     pdf.cell(0, 6, 'Pencarian matriks Ideal (AI) & Anti-Ideal (AAI) untuk Atribut Benefit/Cost', ln=True)
@@ -102,7 +102,7 @@ def create_report():
 
     # Test 3
     pdf.set_font('Arial', 'B', 10)
-    pdf.cell(0, 6, ' 3.3. Pengujian End-to-End Alur Aduan (AduanFlowTest.php)', border=1, ln=True, fill=True)
+    pdf.cell(0, 6, ' 3.3. Pengujian End-to-End Alur Aduan (UserControllerTest & SatgasControllerTest)', border=1, ln=True, fill=True)
     pdf.set_font('Arial', '', 10)
     pdf.cell(30, 6, ' Skenario 1:')
     pdf.cell(0, 6, 'Simulasi pengiriman form, auto-encryption, dan update status', ln=True)
@@ -112,9 +112,9 @@ def create_report():
     pdf.set_text_color(0, 0, 0)
     
     details = (
-        "- HTTP 302 Redirect terkonfirmasi sukses.\n"
-        "- Insert ke tabel aduans, statuses, dan alternatifs berhasil.\n"
-        "- Proses dekripsi data pasca-simpan menghasilkan nilai yang identik."
+        "- Database constraint (NOT NULL) berhasil divalidasi.\n"
+        "- File fisik terenkripsi AES secara langsung di disk.\n"
+        "- Proses dekripsi oleh Satgas menggunakan verifikasi PIN / Private Key berhasil."
     )
     pdf.set_font('Arial', 'I', 9)
     pdf.multi_cell(0, 5, details)
